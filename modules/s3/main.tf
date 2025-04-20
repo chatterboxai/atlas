@@ -39,8 +39,53 @@ resource "aws_s3_bucket_cors_configuration" "main" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "PUT", "POST", "DELETE"]
-    allowed_origins = ["*"] # In production, restrict this to your frontend domain
-    expose_headers  = ["ETag"]
+    allowed_origins = var.allowed_origins # Use variable instead of wildcard
+    expose_headers  = ["ETag", "Content-Type", "Content-Length"]
     max_age_seconds = 3000
   }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "main" {
+  bucket = aws_s3_bucket.main.id
+
+  rule {
+    id     = "temp-uploads-rule"
+    status = "Enabled"
+
+    expiration {
+      days = 7 # Temporary uploads expire after 7 days
+    }
+
+    filter {
+      prefix = "uploads/" # Apply rule to uploads directory
+    }
+  }
+}
+
+# Allow IAM users/roles to generate presigned URLs
+resource "aws_s3_bucket_policy" "allow_access_with_iam" {
+  bucket = aws_s3_bucket.main.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "*"
+        }
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject"
+        ]
+        Resource = [
+          "${aws_s3_bucket.main.arn}/*"
+        ]
+        Condition = {
+          StringEquals = {
+            "aws:PrincipalArn" : var.allowed_principal_arns
+          }
+        }
+      }
+    ]
+  })
 }

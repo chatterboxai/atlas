@@ -45,9 +45,11 @@ module "cognito" {
   user_pool_name = var.user_pool_name
 }
 
-# module "s3" {
-#   source = "../modules/s3"
+module "s3" {
+  source = "../modules/s3"
 
-#   environment = var.environment
-#   bucket_name = var.bucket_name
-# }
+  environment            = var.environment
+  bucket_name            = var.bucket_name
+  allowed_origins        = var.allowed_origins
+  allowed_principal_arns = var.allowed_principal_arns
+}

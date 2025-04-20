@@ -46,5 +46,24 @@ output "db_username" {
   value       = module.rds.db_username
 }
 
+# S3 outputs
+output "s3_bucket_id" {
+  description = "The ID of the S3 bucket"
+  value       = module.s3.bucket_id
+}
 
+output "s3_bucket_arn" {
+  description = "The ARN of the S3 bucket"
+  value       = module.s3.bucket_arn
+}
+
+output "s3_bucket_domain_name" {
+  description = "The bucket domain name"
+  value       = module.s3.bucket_domain_name
+}
+
+output "s3_bucket_regional_domain_name" {
+  description = "The bucket region-specific domain name"
+  value       = module.s3.bucket_regional_domain_name
+}
 

@@ -43,5 +43,17 @@ variable "user_pool_name" {
 variable "bucket_name" {
   description = "Name of the S3 bucket for file uploads"
   type        = string
-  default     = "chatterbox-uploads"
+  default     = "chatterbox-uploads-dev"
+}
+
+variable "allowed_origins" {
+  description = "List of allowed origins for CORS configuration"
+  type        = list(string)
+  default     = ["http://localhost:3000"]
+}
+
+variable "allowed_principal_arns" {
+  description = "List of IAM principal ARNs allowed to access the bucket. Should be provided in terraform.tfvars or via command line"
+  type        = list(string)
+  default     = [] # Will be overridden by values in terraform.tfvars
 }
